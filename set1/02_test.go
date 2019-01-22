@@ -1,8 +1,8 @@
 package set1
 
 import (
-	"encoding/hex"
 	"bytes"
+	"encoding/hex"
 	"testing"
 )
 
