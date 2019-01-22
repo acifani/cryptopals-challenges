@@ -18,36 +18,45 @@ import (
 )
 
 func scoreString(decodedString []byte, candidate rune) (int, []byte) {
-	xoredString := make([]byte, len(decodedString))
-	candidateByte := byte(candidate)
-	for i := range decodedString {
-		xoredString[i] = decodedString[i] ^ candidateByte
-	}
-
-	mostCommonLetters := []byte("etaoin shrdlu")
-	commonLettersLength := len(mostCommonLetters)
+	xoredString := xorAgainstByte(decodedString, byte(candidate))
 	score := 0
 	for _, char := range xoredString {
-		rarity := -1
-		index := bytes.IndexByte(mostCommonLetters, char)
-		if index > -1 {
-			rarity = commonLettersLength - index
-		}
-		score += rarity
+		score += calcLetterRarity(char)
 	}
+
 	return score, xoredString
+}
+
+func xorAgainstByte(buff []byte, char byte) []byte {
+	xoredString := make([]byte, len(buff))
+	for i := range buff {
+		xoredString[i] = buff[i] ^ char
+	}
+
+	return xoredString
+}
+
+func calcLetterRarity(char byte) int {
+	mostCommonLetters := []byte("etaoin shrdlu")
+	commonLettersLength := len(mostCommonLetters)
+	rarity := -1
+	index := bytes.IndexByte(mostCommonLetters, char)
+	if index > -1 {
+		rarity = commonLettersLength - index
+	}
+	return rarity
 }
 
 // BruteForceXORCypher takes an hex encoded string that has been
 // XORed against a single character and tries to decypher it
-func BruteForceXORCypher(hexString string) (string, error) {
+func BruteForceXORCypher(hexString string) (string, int, error) {
 	decodedString, err := hex.DecodeString(hexString)
 	if err != nil {
-		return "", err
+		return "", 0, err
 	}
 
 	maxScore := 0
-	bestMatch := []byte{}
+	var bestMatch []byte
 
 	for i := 0; i < 256; i++ {
 		candidate := rune(i)
@@ -58,5 +67,5 @@ func BruteForceXORCypher(hexString string) (string, error) {
 		}
 	}
 
-	return string(bestMatch), nil
+	return string(bestMatch), maxScore, nil
 }
