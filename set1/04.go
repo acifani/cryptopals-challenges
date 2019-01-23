@@ -11,6 +11,7 @@ package set1
 import (
 	"bufio"
 	"os"
+	"strings"
 )
 
 // DetectRuneXOR reads every line from the given file path
@@ -43,5 +44,5 @@ func DetectRuneXOR(filePath string) (string, error) {
 		return "", err
 	}
 
-	return bestMatch, nil
+	return strings.TrimRight(bestMatch, "\r\n"), nil
 }
