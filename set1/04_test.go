@@ -2,7 +2,7 @@ package set1
 
 import "testing"
 
-func Test(t *testing.T) {
+func TestDetectRuneXOR(t *testing.T) {
 	expected := "Now that the party is jumping"
 
 	output, _ := DetectRuneXOR("../data/4.txt")
