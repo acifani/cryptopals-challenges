@@ -39,14 +39,46 @@ package set1
 
 import (
 	"encoding/base64"
+	"math"
 )
 
 func BreakRepeatinKeyXOR(input []byte) []byte {
+	//keySize := EstimateKeySize(input)
 	var result []byte
 	base64.StdEncoding.Decode(result, input)
 	return result
 }
 
+func EstimateKeySize(input []byte) int {
+	numOfChunks := 4
+	bestKeySize := 2
+	bestScore := math.Inf(1)
+	for keySize := 2; keySize <= 40; keySize++ {
+		chunks := make([][]byte, numOfChunks)
+		for i := range chunks {
+			start := keySize * i
+			chunks[i] = input[start : start+keySize]
+		}
+		sumOfDistances := 0
+		for i, a := range chunks {
+			for j, b := range chunks {
+				if i != j {
+					sumOfDistances += HammingDistance(a, b) / keySize
+				}
+			}
+		}
+		score := float64(sumOfDistances) / float64(numOfChunks)
+		if score < bestScore {
+			bestKeySize = keySize
+			bestScore = score
+		}
+	}
+
+	return bestKeySize
+}
+
+// HammingDistance calculates the edit distance given two byte arrays
+// of the same length
 func HammingDistance(a, b []byte) int {
 	diff := 0
 	for i, valueA := range a {
@@ -61,8 +93,4 @@ func HammingDistance(a, b []byte) int {
 		}
 	}
 	return diff
-}
-
-func EstimateKeySize() int {
-	return 0
 }
