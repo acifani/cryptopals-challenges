@@ -36,3 +36,33 @@ and a similar technique breaks something much more important.
 */
 
 package set1
+
+import (
+	"encoding/base64"
+)
+
+func BreakRepeatinKeyXOR(input []byte) []byte {
+	var result []byte
+	base64.StdEncoding.Decode(result, input)
+	return result
+}
+
+func HammingDistance(a, b []byte) int {
+	diff := 0
+	for i, valueA := range a {
+		valueB := b[i]
+		for j := 0; j < 8; j++ {
+			mask := byte(1 << uint(j))
+			bitA := valueA & mask
+			bitB := valueB & mask
+			if bitA != bitB {
+				diff++
+			}
+		}
+	}
+	return diff
+}
+
+func EstimateKeySize() int {
+	return 0
+}
