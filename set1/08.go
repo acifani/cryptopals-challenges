@@ -10,6 +10,7 @@ Remember that the problem with ECB is that it is stateless and deterministic; th
 
 package set1
 
+// DetectAESinECB will return true if it encounters a 16-byte-big block more than once
 func DetectAESinECB(input []byte) bool {
 	blockSize := 16
 	seenBlocks := make(map[string]int)

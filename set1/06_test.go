@@ -58,6 +58,6 @@ func ReadFile(path string, t *testing.T) []byte {
 func ReadFromBase64File(path string, t *testing.T) []byte {
 	encryptedInput := ReadFile(path, t)
 	input := make([]byte, base64.StdEncoding.DecodedLen(len(encryptedInput)))
-	base64.StdEncoding.Decode(input, encryptedInput)
-	return input
+	n, _ := base64.RawStdEncoding.Decode(input, encryptedInput)
+	return input[:n]
 }

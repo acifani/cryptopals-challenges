@@ -66,7 +66,7 @@ func EstimateKeySize(input []byte) int {
 	bestScore := math.Inf(1)
 	for keySize := 2; keySize <= 40; keySize++ {
 		chunks := make([][]byte, numOfChunks)
-		for i := range chunks {
+		for i := 0; i < len(chunks); i++ {
 			start := keySize * i
 			chunks[i] = input[start : start+keySize]
 		}
@@ -102,14 +102,13 @@ func HammingDistance(a, b []byte) int {
 
 func breakIntoBlocks(input []byte, size int) [][]byte {
 	inputLen := len(input)
-	blocks := make([][]byte, inputLen/size+1)
-	for i := range blocks {
-		start := i * size
+	blocks := make([][]byte, inputLen+size-1/size)
+	for start := 0; start < inputLen; start += size {
 		end := start + size
-		if inputLen < end {
+		if end > inputLen {
 			end = inputLen
 		}
-		blocks[i] = input[start:end]
+		blocks = append(blocks, input[start:end])
 	}
 	return blocks
 }

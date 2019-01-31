@@ -20,6 +20,11 @@ func DecryptAESinECB(key, input []byte) []byte {
 	if err != nil {
 		panic(err)
 	}
+
+	if len(input)%cipher.BlockSize() != 0 {
+		panic("Input length not a multiple of the block size")
+	}
+
 	result := make([]byte, len(input))
 	for start := 0; start < len(input); start += cipher.BlockSize() {
 		cipher.Decrypt(result[start:], input[start:])
