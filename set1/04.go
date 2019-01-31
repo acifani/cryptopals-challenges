@@ -10,6 +10,7 @@ package set1
 
 import (
 	"bufio"
+	"encoding/hex"
 	"os"
 	"strings"
 )
@@ -24,15 +25,17 @@ func DetectRuneXOR(filePath string) (string, error) {
 	}
 	defer file.Close()
 
-	bestMatch := ""
+	bestMatch := []byte{}
 	maxScore := 0
 
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
-		decodedString, score, err := BruteForceXORCypher(scanner.Text())
+		decodedLine, err := hex.DecodeString(scanner.Text())
 		if err != nil {
 			return "", err
 		}
+
+		decodedString, score := BruteForceXORCypher([]byte(decodedLine))
 
 		if score > maxScore {
 			maxScore = score
@@ -44,5 +47,5 @@ func DetectRuneXOR(filePath string) (string, error) {
 		return "", err
 	}
 
-	return strings.TrimRight(bestMatch, "\r\n"), nil
+	return strings.TrimRight(string(bestMatch), "\r\n"), nil
 }

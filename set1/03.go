@@ -12,10 +12,7 @@ Character frequency is a good metric. Evaluate each output and choose the one wi
 
 package set1
 
-import (
-	"bytes"
-	"encoding/hex"
-)
+import "bytes"
 
 func scoreString(decodedString []byte, candidate rune) (int, []byte) {
 	xoredString := xorAgainstByte(decodedString, byte(candidate))
@@ -49,23 +46,18 @@ func calcLetterRarity(char byte) int {
 
 // BruteForceXORCypher takes an hex encoded string that has been
 // XORed against a single character and tries to decypher it
-func BruteForceXORCypher(hexString string) (string, int, error) {
-	decodedString, err := hex.DecodeString(hexString)
-	if err != nil {
-		return "", 0, err
-	}
-
+func BruteForceXORCypher(input []byte) ([]byte, int) {
 	maxScore := 0
 	var bestMatch []byte
 
 	for i := 0; i < 256; i++ {
 		candidate := rune(i)
-		score, match := scoreString(decodedString, candidate)
+		score, match := scoreString(input, candidate)
 		if score > maxScore {
 			maxScore = score
 			bestMatch = match
 		}
 	}
 
-	return string(bestMatch), maxScore, nil
+	return bestMatch, maxScore
 }
