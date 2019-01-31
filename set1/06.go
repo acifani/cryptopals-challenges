@@ -38,18 +38,28 @@ and a similar technique breaks something much more important.
 package set1
 
 import (
-	"encoding/base64"
+	"bytes"
 	"math"
 	"math/bits"
 )
 
-func BreakRepeatinKeyXOR(input []byte) []byte {
-	//keySize := EstimateKeySize(input)
-	var result []byte
-	base64.StdEncoding.Decode(result, input)
-	return result
+// BreakRepeatingKeyXOR deciphers a given input that has been
+// XORed with a repeating key and returns the best result it finds
+func BreakRepeatingKeyXOR(input []byte) []byte {
+	keySize := EstimateKeySize(input)
+	blocks := breakIntoBlocks(input, keySize)
+	transposedBlocks := transposeBlocks(blocks)
+
+	xorKey := make([][]byte, len(transposedBlocks))
+	for i, block := range transposedBlocks {
+		res, _ := BruteForceXORCypher(block)
+		xorKey[i] = res
+	}
+
+	return bytes.Join(transposeBlocks(xorKey), []byte{})
 }
 
+// EstimateKeySize estimates the size of a repeating XOR key
 func EstimateKeySize(input []byte) int {
 	numOfChunks := 4
 	bestKeySize := 2
@@ -88,4 +98,28 @@ func HammingDistance(a, b []byte) int {
 	}
 
 	return distance
+}
+
+func breakIntoBlocks(input []byte, size int) [][]byte {
+	inputLen := len(input)
+	blocks := make([][]byte, inputLen/size+1)
+	for i := range blocks {
+		start := i * size
+		end := start + size
+		if inputLen < end {
+			end = inputLen
+		}
+		blocks[i] = input[start:end]
+	}
+	return blocks
+}
+
+func transposeBlocks(input [][]byte) [][]byte {
+	transposed := make([][]byte, len(input))
+	for _, block := range input {
+		for j, value := range block {
+			transposed[j] = append(transposed[j], value)
+		}
+	}
+	return transposed
 }
