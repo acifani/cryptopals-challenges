@@ -13,7 +13,7 @@ Well that's my DJ Deshay cuttin' all them Z's
 Hittin' hard and the girlies goin' crazy
 Vanilla's on the mike, man I'm not lazy.`)
 	key := []byte("YELLOW SUBMARINE")
-	input := ReadFromBase64("../data/7.txt", t)
+	input := ReadFromBase64File("../data/7.txt", t)
 
 	output := DecryptAESinECB(key, input)
 

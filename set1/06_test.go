@@ -9,9 +9,7 @@ import (
 
 func TestEstimateKeySize(t *testing.T) {
 	expected := 29
-	encryptedInput, _ := ioutil.ReadFile("../data/6.txt")
-	input := make([]byte, base64.StdEncoding.DecodedLen(len(encryptedInput)))
-	base64.StdEncoding.Decode(input, encryptedInput)
+	input := ReadFromBase64File("../data/6.txt", t)
 
 	output := EstimateKeySize(input)
 
@@ -39,7 +37,7 @@ In ecstasy in the back of me
 Well that's my DJ Deshay cuttin' all them Z's
 Hittin' hard and the girlies goin' crazy
 Vanilla's on the mike, man I'm not lazy.`)
-	input := ReadFromBase64("../data/6.txt", t)
+	input := ReadFromBase64File("../data/6.txt", t)
 
 	output := BreakRepeatingKeyXOR(input)
 
@@ -49,11 +47,16 @@ Vanilla's on the mike, man I'm not lazy.`)
 	}
 }
 
-func ReadFromBase64(path string, t *testing.T) []byte {
-	encryptedInput, err := ioutil.ReadFile(path)
+func ReadFile(path string, t *testing.T) []byte {
+	file, err := ioutil.ReadFile(path)
 	if err != nil {
 		t.Fatal(err)
 	}
+	return file
+}
+
+func ReadFromBase64File(path string, t *testing.T) []byte {
+	encryptedInput := ReadFile(path, t)
 	input := make([]byte, base64.StdEncoding.DecodedLen(len(encryptedInput)))
 	base64.StdEncoding.Decode(input, encryptedInput)
 	return input
