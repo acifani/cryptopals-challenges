@@ -6,18 +6,12 @@ import (
 )
 
 func TestDecryptAESinECB(t *testing.T) {
-	expected := []byte(`I'm back and I'm ringin' the bell
-A rockin' on the mike while the fly girls yell
-In ecstasy in the back of me
-Well that's my DJ Deshay cuttin' all them Z's
-Hittin' hard and the girlies goin' crazy
-Vanilla's on the mike, man I'm not lazy.`)
+	expected := []byte("I'm back and I'm ringin' the bell")
 	key := []byte("YELLOW SUBMARINE")
 	input := ReadFromBase64File("../data/7.txt", t)
 
 	output := DecryptAESinECB(key, input)
 
-	t.Log(string(output))
 	if !bytes.Equal(expected, output[:len(expected)]) {
 		t.Fatalf("Expected %s, but got %s", expected, output[:len(expected)])
 	}
