@@ -14,8 +14,9 @@ package set1
 
 import "crypto/aes"
 
-// DecryptAESinECB decyphers an input encrypted via AES-128 in ECB, according to the given key
-func DecryptAESinECB(key, input []byte) []byte {
+// DecryptAESinECB decyphers an input encrypted via AES-128 in ECB,
+// according to the given key
+func DecryptAESinECB(input, key []byte) []byte {
 	cipher, err := aes.NewCipher(key)
 	if err != nil {
 		panic(err)

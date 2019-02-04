@@ -20,8 +20,7 @@ import "strings"
 
 // PadRight fills the input array with \x04 up until the desired length
 func PadRight(input []byte, length int) []byte {
-	paddingUnit := "\x04"
 	paddingLength := length - len(input)
-	padding := strings.Repeat(paddingUnit, paddingLength)
+	padding := strings.Repeat(string(byte(paddingLength)), paddingLength)
 	return append(input, []byte(padding)...)
 }

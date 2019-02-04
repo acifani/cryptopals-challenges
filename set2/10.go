@@ -25,6 +25,8 @@ import (
 	"../set1"
 )
 
+// DecryptAESinCBC decyphers an input encrypted via AES-128 in CBC,
+// according to the given key and IV
 func DecryptAESinCBC(input, key, iv []byte) []byte {
 	cipher, err := aes.NewCipher(key)
 	if err != nil {
@@ -43,6 +45,50 @@ func DecryptAESinCBC(input, key, iv []byte) []byte {
 		plaintext := set1.RepeatingKeyXOR(decryptedText, prevBlock)
 		result = append(result, plaintext...)
 		prevBlock = block
+	}
+
+	return result
+}
+
+// EncryptAESinCBC encrypts a plaintext input via AES-128 in CBC,
+// according to the given key and IV
+func EncryptAESinCBC(input, key, iv []byte) []byte {
+	cipher, err := aes.NewCipher(key)
+	if err != nil {
+		panic(err)
+	}
+
+	paddingLength := len(input) % cipher.BlockSize()
+	paddedInput := PadRight(input, len(input)+paddingLength)
+
+	result := make([]byte, len(paddedInput))
+	prevBlock := iv
+	for start := 0; start < len(paddedInput); start += cipher.BlockSize() {
+		end := start + cipher.BlockSize()
+		block := input[start:end]
+		xoredBlock := set1.RepeatingKeyXOR(block, prevBlock)
+		cipher.Encrypt(result[start:end], xoredBlock)
+		prevBlock = result[start:end]
+	}
+
+	return result
+}
+
+// EncryptAESinECB encrypts a plaintext input via AES-128 in ECB,
+// according to the given key
+func EncryptAESinECB(input, key []byte) []byte {
+	cipher, err := aes.NewCipher(key)
+	if err != nil {
+		panic(err)
+	}
+
+	if len(input)%cipher.BlockSize() != 0 {
+		panic("Input length not a multiple of the block size")
+	}
+
+	result := make([]byte, len(input))
+	for start := 0; start < len(input); start += cipher.BlockSize() {
+		cipher.Encrypt(result[start:], input[start:])
 	}
 
 	return result
