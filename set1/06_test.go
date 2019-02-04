@@ -2,14 +2,14 @@ package set1
 
 import (
 	"bytes"
-	"encoding/base64"
-	"io/ioutil"
 	"testing"
+
+	"../utils"
 )
 
 func TestEstimateKeySize(t *testing.T) {
 	expected := 29
-	input := ReadFromBase64File("../data/6.txt", t)
+	input := utils.ReadFromBase64File("../data/6.txt", t)
 
 	output := EstimateKeySize(input)
 
@@ -32,26 +32,11 @@ func TestHammingDistance(t *testing.T) {
 
 func TestBreakRepeatinKeyXOR(t *testing.T) {
 	expected := []byte("I'm back and I'm ringin' the bell")
-	input := ReadFromBase64File("../data/6.txt", t)
+	input := utils.ReadFromBase64File("../data/6.txt", t)
 
 	output := BreakRepeatingKeyXOR(input)
 
 	if !bytes.Equal(expected, output[:len(expected)]) {
 		t.Fatalf("Expected %s, but got %s", expected, output[:len(expected)])
 	}
-}
-
-func ReadFile(path string, t *testing.T) []byte {
-	file, err := ioutil.ReadFile(path)
-	if err != nil {
-		t.Fatal(err)
-	}
-	return file
-}
-
-func ReadFromBase64File(path string, t *testing.T) []byte {
-	encryptedInput := ReadFile(path, t)
-	input := make([]byte, base64.StdEncoding.DecodedLen(len(encryptedInput)))
-	n, _ := base64.RawStdEncoding.Decode(input, encryptedInput)
-	return input[:n]
 }

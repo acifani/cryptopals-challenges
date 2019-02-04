@@ -3,10 +3,12 @@ package set1
 import (
 	"strings"
 	"testing"
+
+	"../utils"
 )
 
 func TestDetectAESinECB(t *testing.T) {
-	input := ReadFile("../data/8.txt", t)
+	input := utils.ReadFile("../data/8.txt", t)
 	inputLines := strings.Split(string(input), "\n")
 
 	for i, line := range inputLines {

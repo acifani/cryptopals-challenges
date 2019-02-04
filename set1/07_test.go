@@ -3,12 +3,14 @@ package set1
 import (
 	"bytes"
 	"testing"
+
+	"../utils"
 )
 
 func TestDecryptAESinECB(t *testing.T) {
 	expected := []byte("I'm back and I'm ringin' the bell")
 	key := []byte("YELLOW SUBMARINE")
-	input := ReadFromBase64File("../data/7.txt", t)
+	input := utils.ReadFromBase64File("../data/7.txt", t)
 
 	output := DecryptAESinECB(key, input)
 
