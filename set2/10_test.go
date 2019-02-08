@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"testing"
 
-	"../set1"
-	"../utils"
+	"github.com/acifani/cryptopals-challenges/set1"
+	"github.com/acifani/cryptopals-challenges/utils"
 )
 
 func TestDecryptAESinCBC(t *testing.T) {

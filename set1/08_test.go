@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"../utils"
+	"github.com/acifani/cryptopals-challenges/utils"
 )
 
 func TestDetectAESinECB(t *testing.T) {

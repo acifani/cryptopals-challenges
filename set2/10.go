@@ -22,7 +22,7 @@ package set2
 import (
 	"crypto/aes"
 
-	"../set1"
+	"github.com/acifani/cryptopals-challenges/set1"
 )
 
 // DecryptAESinCBC decyphers an input encrypted via AES-128 in CBC,

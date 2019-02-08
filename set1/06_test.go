@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"testing"
 
-	"../utils"
+	"github.com/acifani/cryptopals-challenges/utils"
 )
 
 func TestEstimateKeySize(t *testing.T) {
