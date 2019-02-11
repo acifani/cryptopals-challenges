@@ -13,7 +13,7 @@ func TestDetectAESinECB(t *testing.T) {
 
 	for i, line := range inputLines {
 		decodedLine := HexDecode([]byte(line), t)
-		output := DetectAESinECB([]byte(decodedLine))
+		output := DetectAESinECB([]byte(decodedLine), 16)
 		if output {
 			if i != 132 {
 				t.Fail()

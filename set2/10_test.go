@@ -24,7 +24,7 @@ func TestDecryptAESinCBC(t *testing.T) {
 func TestEncryptAESinCBC(t *testing.T) {
 	input := []byte("YELLOW SUBMARINE")
 	key := []byte("YELLOW SUBMARINE")
-	iv := []byte("\x00\x00\x00")
+	iv := bytes.Repeat([]byte("\x00"), 16)
 
 	output := DecryptAESinCBC(EncryptAESinCBC(input, key, iv), key, iv)
 

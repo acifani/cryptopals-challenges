@@ -51,7 +51,7 @@ func EncryptionOracle(input []byte) []byte {
 	prefix := generateRandomKey(5 + math_rand.Intn(6))
 	suffix := generateRandomKey(5 + math_rand.Intn(6))
 	randInput := append(append(prefix, input...), suffix...)
-	paddedInput := padMultiple(randInput, 16)
+	paddedInput := PadRight(randInput, 16)
 
 	key := generateRandomKey(16)
 	if math_rand.Intn(2) == 0 {
@@ -62,17 +62,12 @@ func EncryptionOracle(input []byte) []byte {
 	return EncryptAESinECB(paddedInput, key)
 }
 
-func padMultiple(input []byte, base int) []byte {
-	mod := len(input) % base
-	return PadRight(input, len(input)+base-mod)
-}
-
 // DetectAESMode will return "ECB" is the given string is encrypted in
 // ECB mode, CBC otherwise. Input must be at least 32 byte long
 func DetectAESMode(input []byte) string {
 	for i := 0; i < len(input); i++ {
-		paddedInput := padMultiple(input[i:], 16)
-		if set1.DetectAESinECB(paddedInput) {
+		paddedInput := PadRight(input[i:], 16)
+		if set1.DetectAESinECB(paddedInput, 16) {
 			return "ECB"
 		}
 	}

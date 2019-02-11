@@ -10,9 +10,12 @@ Remember that the problem with ECB is that it is stateless and deterministic; th
 
 package set1
 
-// DetectAESinECB will return true if it encounters a 16-byte-big block more than once
-func DetectAESinECB(input []byte) bool {
-	blockSize := 16
+// DetectAESinECB will return true if it encounters a block of the given size more than once
+func DetectAESinECB(input []byte, blockSize int) bool {
+	if len(input)%blockSize != 0 {
+		panic("Input length not a multiple of the block size")
+	}
+
 	seenBlocks := make(map[string]int)
 	for start := 0; start < len(input); start += blockSize {
 		end := start + blockSize

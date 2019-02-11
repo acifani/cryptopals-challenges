@@ -33,14 +33,13 @@ func DecryptAESinCBC(input, key, iv []byte) []byte {
 		panic(err)
 	}
 
-	paddingLength := len(input) % cipher.BlockSize()
-	paddedInput := PadRight(input, len(input)+paddingLength)
-
+	blockSize := cipher.BlockSize()
+	paddedInput := PadRight(input, blockSize)
 	var result []byte
 	prevBlock := iv
-	for start := 0; start < len(paddedInput); start += cipher.BlockSize() {
-		decryptedText := make([]byte, cipher.BlockSize())
-		block := input[start : start+cipher.BlockSize()]
+	for i := 0; i < len(paddedInput)/blockSize; i++ {
+		decryptedText := make([]byte, blockSize)
+		block := paddedInput[i*blockSize : (i+1)*blockSize]
 		cipher.Decrypt(decryptedText, block)
 		plaintext := set1.RepeatingKeyXOR(decryptedText, prevBlock)
 		result = append(result, plaintext...)
@@ -58,17 +57,15 @@ func EncryptAESinCBC(input, key, iv []byte) []byte {
 		panic(err)
 	}
 
-	paddingLength := len(input) % cipher.BlockSize()
-	paddedInput := PadRight(input, len(input)+paddingLength)
-
+	blockSize := cipher.BlockSize()
+	paddedInput := PadRight(input, blockSize)
 	result := make([]byte, len(paddedInput))
 	prevBlock := iv
-	for start := 0; start < len(paddedInput); start += cipher.BlockSize() {
-		end := start + cipher.BlockSize()
-		block := input[start:end]
+	for i := 0; i < len(paddedInput)/blockSize; i++ {
+		block := paddedInput[i*blockSize : (i+1)*blockSize]
 		xoredBlock := set1.RepeatingKeyXOR(block, prevBlock)
-		cipher.Encrypt(result[start:end], xoredBlock)
-		prevBlock = result[start:end]
+		cipher.Encrypt(result[i*blockSize:(i+1)*blockSize], xoredBlock)
+		prevBlock = result[i*blockSize : (i+1)*blockSize]
 	}
 
 	return result
