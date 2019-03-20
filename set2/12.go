@@ -60,13 +60,13 @@ YnkK`)
 
 // ECBSuffixDecryption decrypts the secret appendend
 // to a ECB encryption oracle
-func ECBSuffixDecryption() []byte {
-	blockSize := guessBlockSize()
+func ECBSuffixDecryption(oracle func([]byte) []byte) []byte {
+	blockSize := guessBlockSize(oracle)
 	if blockSize == 0 {
-		panic("Couldn't guess block size, input string is not ECB")
+		panic("Couldn't guess block size")
 	}
 
-	suffixLen := len(encryptECBWithUnknownKey([]byte{}))
+	suffixLen := len(oracle([]byte{}))
 	var result []byte
 
 	for len(result) < suffixLen {
@@ -75,8 +75,8 @@ func ECBSuffixDecryption() []byte {
 
 		for i := blockSize - 1; i >= 0; i-- {
 			input := bytes.Repeat([]byte{1}, i)
-			target := encryptECBWithUnknownKey(input)[start:end]
-			encryptionMap := buildMap(input, result, start, end)
+			target := oracle(input)[start:end]
+			encryptionMap := buildMap(oracle, input, result, start, end)
 			secret := encryptionMap[string(target)]
 			result = append(result, secret)
 		}
@@ -85,10 +85,10 @@ func ECBSuffixDecryption() []byte {
 	return result
 }
 
-func guessBlockSize() int {
+func guessBlockSize(oracle func([]byte) []byte) int {
 	for i := 1; i <= 128; i++ {
 		input := bytes.Repeat([]byte{1}, i*2)
-		encrypted := encryptECBWithUnknownKey(input)
+		encrypted := oracle(input)
 		if set1.DetectAESinECB(encrypted[:i*2], i) {
 			return i
 		}
@@ -97,13 +97,13 @@ func guessBlockSize() int {
 	return 0
 }
 
-func buildMap(input, result []byte, start, end int) map[string]byte {
+func buildMap(oracle func([]byte) []byte, input, result []byte, start, end int) map[string]byte {
 	base := append(input, result...)
 	encryptionMap := make(map[string]byte)
 	for i := 0; i < 256; i++ {
 		b := byte(i)
 		toBeEncrypted := append(base, b)
-		candidate := encryptECBWithUnknownKey(toBeEncrypted)[start:end]
+		candidate := oracle(toBeEncrypted)[start:end]
 		encryptionMap[string(candidate)] = b
 	}
 

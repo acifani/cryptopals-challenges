@@ -33,13 +33,20 @@ func DecryptAESinCBC(input, key, iv []byte) []byte {
 		panic(err)
 	}
 
+	if len(input)%cipher.BlockSize() != 0 {
+		panic("Input length not a multiple of the block size")
+	}
+
+	if len(iv) != cipher.BlockSize() {
+		panic("Wrong IV size")
+	}
+
 	blockSize := cipher.BlockSize()
-	paddedInput := PadRight(input, blockSize)
 	var result []byte
 	prevBlock := iv
-	for i := 0; i < len(paddedInput)/blockSize; i++ {
+	for i := 0; i < len(input)/blockSize; i++ {
 		decryptedText := make([]byte, blockSize)
-		block := paddedInput[i*blockSize : (i+1)*blockSize]
+		block := input[i*blockSize : (i+1)*blockSize]
 		cipher.Decrypt(decryptedText, block)
 		plaintext := set1.RepeatingKeyXOR(decryptedText, prevBlock)
 		result = append(result, plaintext...)
@@ -57,12 +64,19 @@ func EncryptAESinCBC(input, key, iv []byte) []byte {
 		panic(err)
 	}
 
+	if len(input)%cipher.BlockSize() != 0 {
+		panic("Input length not a multiple of the block size")
+	}
+
+	if len(iv) != cipher.BlockSize() {
+		panic("Wrong IV size")
+	}
+
 	blockSize := cipher.BlockSize()
-	paddedInput := PadRight(input, blockSize)
-	result := make([]byte, len(paddedInput))
+	result := make([]byte, len(input))
 	prevBlock := iv
-	for i := 0; i < len(paddedInput)/blockSize; i++ {
-		block := paddedInput[i*blockSize : (i+1)*blockSize]
+	for i := 0; i < len(input)/blockSize; i++ {
+		block := input[i*blockSize : (i+1)*blockSize]
 		xoredBlock := set1.RepeatingKeyXOR(block, prevBlock)
 		cipher.Encrypt(result[i*blockSize:(i+1)*blockSize], xoredBlock)
 		prevBlock = result[i*blockSize : (i+1)*blockSize]

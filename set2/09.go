@@ -20,11 +20,6 @@ import "bytes"
 
 // PadRight fills the input array with \x04 up until the desired length
 func PadRight(input []byte, length int) []byte {
-	mod := len(input) % length
-	if mod == 0 {
-		return input
-	}
-
 	paddingLength := length - len(input)%length
 	padding := bytes.Repeat([]byte{byte(paddingLength)}, paddingLength)
 	return append(input, padding...)
